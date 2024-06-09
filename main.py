@@ -135,7 +135,7 @@ def main():
     print(f"생성할 파일의 수: 전체")
   else:
     print(f"생성할 파일의 수: {selected_count + 1}")
-  print("\n 작업을 시작합니다. (ESC를 누르면 작업을 중단할 수 있습니다.)\n")
+  print("\n 작업을 시작합니다. (작업을 중단하려면 ESC를 눌러주세요.)\n")
 
   for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="진행 중"):      
     if start_point > index:
@@ -194,6 +194,7 @@ def check_esc():
   while True:
     if keyboard.is_pressed('esc'):
       print("\n 작업이 중단되었습니다.")
+      time.sleep(0.2)
       os._exit(1) 
         
     time.sleep(0.1)
@@ -208,3 +209,5 @@ try:
 except Exception as e:
   print("\n 사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다. \n")
   print(f"{e}")
+
+input("종료하려면 enter 키를 눌러주세요.")
