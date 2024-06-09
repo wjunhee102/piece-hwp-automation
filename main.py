@@ -191,7 +191,7 @@ def check_esc():
         print("\n 작업이 중단되었습니다.")
         os._exit(1) 
       else:
-        break;
+        break
         
     time.sleep(0.1)
     
