@@ -104,6 +104,8 @@ def main():
   generated_count = 0;
   failed_names = []
 
+  print("\n - 정보 -")
+  print(f"사업명: {title}")
   print(f"설정된 시작지점: {start_point + 1}")
   print(f"설정된 생성할 파일의 수: {selected_count + 1}")
   print("\n 작업을 시작합니다.")
