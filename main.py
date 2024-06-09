@@ -29,13 +29,13 @@ def get_title_input():
 def get_current_date_input():
   today = datetime.datetime.now().date()
   
-  user_input = input(f"날짜를 YYYY-MM-DD 형식으로 입력해주세요 (비워두면 오늘 날짜인 {today} 사용): ")
+  user_input = input(f"날짜를 YYYY.MM.DD 형식으로 입력해주세요 (비워두면 오늘 날짜인 {today} 사용): ")
   
   if not user_input: 
     return today
   else:
     try:
-      return datetime.datetime.strptime(user_input, '%Y-%m-%d').date()
+      return datetime.datetime.strptime(user_input, '%Y.%m.%d').date()
     except ValueError:
       print("잘못된 날짜 형식입니다. 다시 시도해주세요.")
       return get_current_date_input()
@@ -70,8 +70,10 @@ def get_numeric_input(prompt, default=0):
 
 def get_settings(base_path):
   settings_path = os.path.join(base_path, "settings.txt")
-  target_name = "name"
-  fields = ["name", "number", "artist", "date", "size", "framesize", "material"]
+  default_target_name = "name"
+  default_fields = ["name", "number", "artist", "date", "size", "framesize", "material", "place"]
+  target_name = default_target_name
+  fields = default_fields
 
   try:
     with open(settings_path, "r") as file:
@@ -91,26 +93,20 @@ def get_settings(base_path):
               fields = [item.strip() for item in value.split(",")]
             except:
               print("Fields 설정을 파싱할 수 없습니다.")
-              
-              target_name = "name"
-              fields = ["name", "number", "artist", "date", "size", "framesize", "material"]
 
-              return [target_name, fields]
+              return [default_target_name, default_fields]
                     
     return [target_name, fields]
 
   except FileNotFoundError:
     print("settings.txt가 없으므로 default option으로 진행합니다.")
 
-    return [target_name, fields]
+    return [default_target_name, default_fields]
   except Exception as e:
     print("사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다.")
     print(f"{e}")
-    
-    target_name = "name"
-    fields = ["name", "number", "artist", "date", "size", "framesize", "material"]
 
-    return [target_name, fields]
+    return [default_target_name, default_fields]
 
 
 def create_unique_directory(base_path, dir_name):
