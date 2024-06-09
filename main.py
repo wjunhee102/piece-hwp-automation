@@ -77,11 +77,10 @@ def main():
   df = pd.read_excel(excel_file_path)
 
   failed_names = []
-  total = df.shape[0]
 
   print("작업을 시작합니다.")
 
-  for index, row in tqdm(df.iterrows(), total, desc="진행 중"):
+  for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="진행 중"):
     if keyboard.is_pressed('esc'):
       response = input("작업을 중단하시겠습니까? (y/n): ")
       if response.lower() == 'y':
@@ -121,6 +120,8 @@ def main():
       except ValueError:
           failed_names.append(f"[row-index: {index}, name: {row["name"]}]")
   
+  total = df.shape[0]
+
   if not failed_names:
     print(f"총 {total}중 {total} 생성완료.")
     print("성공적으로 완료됐습니다!")
