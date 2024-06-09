@@ -82,7 +82,8 @@ def main():
   title = input("사업명을 입력해주세요: ")
   excel_file_name = get_excel_filename()
   excel_file_path = f"./{excel_file_name}.xlsx"
-  startPoint = get_numeric_input("시작지점을 입력해주세요. (빈값으로 입력시 1): ")
+  start_point = get_numeric_input("시작지점을 입력해주세요. (빈값으로 입력시 1): ")
+  selected_count = get_numeric_input("생성할 파일의 수를 입력해주세요. (빈값으로 입력시 전체 생성):")
 
   dir_name = create_unique_directory(file_root, title)
 
@@ -99,9 +100,11 @@ def main():
 
   df = pd.read_excel(excel_file_path)
 
+  progress_count = 0;
+  generated_count = 0;
   failed_names = []
 
-  print(f"설정된 시작지점: {startPoint + 1}")
+  print(f"설정된 시작지점: {start_point + 1}")
   print("작업을 시작합니다.")
 
   for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="진행 중"):
@@ -111,8 +114,13 @@ def main():
           print("작업이 중단되었습니다.")
           break
       
-    if startPoint > index:
+    if start_point > index:
       continue
+
+    if selected_count != 0 or index > start_point + selected_count:
+      break
+
+    progress_count += 1
 
     if pd.isna(row['name']) or row['name'] == '':
       failed_names.append(f"[row-index: {index + 1}, name: 이름 없음]")
@@ -142,19 +150,19 @@ def main():
           else:
               hwp.PutFieldText(field, "-")
 
+        generated_count += 1
         hwp.Save()
         hwp.Quit()
-      except ValueError:
-          failed_names.append(f"[row-index: {index + 1}, name: {row["name"]}]")
-  
-  total = df.shape[0]
 
+      except ValueError:
+          failed_names.append(f"[index: {index + 1}, name: {row["name"]}]")
+
+  print(f"총 {progress_count}중 {generated_count} 생성완료.")
+  
   if not failed_names:
-    print(f"총 {total - startPoint}중 {total - startPoint} 생성완료.")
     print("성공적으로 완료됐습니다!")
     return
   else:
-    print(f"총 {total}중 {total - (len(failed_names) + startPoint)} 생성완료.")
     print("실패한 그림 목록입니다.")
     print(", ".join(failed_names))
 
