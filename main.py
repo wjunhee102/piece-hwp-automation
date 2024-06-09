@@ -101,7 +101,7 @@ def main():
 
   failed_names = []
 
-  print(f"설정된 시작지점: {startPoint}")
+  print(f"설정된 시작지점: {startPoint + 1}")
   print("작업을 시작합니다.")
 
   for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="진행 중"):
