@@ -73,16 +73,14 @@ def get_settings(base_path):
 
           elif key == "fields":
             try:
-              parsed_value = eval(value)
-              if isinstance(parsed_value, list):
-                fields = [item.strip() for item in parsed_value]
+              fields = [item.strip() for item in value.split(",")]
             except:
               print("Fields 설정을 파싱할 수 없습니다.")
 
   except FileNotFoundError:
     print("settings.txt가 없으므로 default option으로 진행합니다.")
 
-    return {target_name, fields}
+    return [target_name, fields]
   except Exception as e:
     print("사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다.")
     print(f"{e}")
@@ -90,9 +88,9 @@ def get_settings(base_path):
     target_name = "name"
     fields = ["name", "number", "artist", "date", "size", "framesize", "material"]
 
-    return {target_name, fields}
+    return [target_name, fields]
 
-  return {target_name, fields}
+  return [target_name, fields]
 
 
 def create_unique_directory(base_path, dir_name):
@@ -133,8 +131,8 @@ def main():
 
   settings = get_settings(file_root)
 
-  fields = settings["fields"]
-  target_name = settings["target_name"]
+  target_name = settings[0]
+  fields = settings[1]
 
   if os.path.exists(os.path.join(file_root, template_hwp_path)) is False:
     print("template.hwp이 존재하지 않습니다. template.hwp을 해당 프로그램 위치에 배치하여 다시 시도해주세요.")
