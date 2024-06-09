@@ -105,6 +105,7 @@ def main():
   failed_names = []
 
   print(f"설정된 시작지점: {start_point + 1}")
+  print(f"설정된 생성할 파일의 수: {selected_count}")
   print("작업을 시작합니다.")
 
   for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="진행 중"):
@@ -123,7 +124,7 @@ def main():
     progress_count += 1
 
     if pd.isna(row['name']) or row['name'] == '':
-      failed_names.append(f"[row-index: {index + 1}, name: 이름 없음]")
+      failed_names.append(f"[index: {index + 1}, name: 이름 없음]")
     
     else:
       try:
