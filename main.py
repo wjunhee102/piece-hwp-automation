@@ -5,6 +5,7 @@ import os
 from tqdm import tqdm
 import keyboard
 import threading
+import time
 
 def sanitize_name(name):
   invalid_chars = '<>:"/\\|?*\n'
@@ -175,13 +176,16 @@ def main():
     print(", ".join(failed_names))
 
 def check_esc():
-  keyboard.wait("esc")
-  response = input("작업을 중단하시겠습니까? (y/n): ")
-  if response.lower() == 'y':
-    print("작업이 중단되었습니다.")
-    os._exit(1) 
-  else:
-    check_esc()
+  while True:
+    if keyboard.is_pressed('esc'):
+      response = input("작업을 중단하시겠습니까? (y/n): ")
+      
+      if response.lower() == 'y':
+        print("작업이 중단되었습니다.")
+        os._exit(1) 
+        
+    time.sleep(0.1)
+    
 
 esc_thread = threading.Thread(target=check_esc)
 esc_thread.daemon = True
