@@ -127,7 +127,7 @@ def main():
     print("성공적으로 완료됐습니다!")
     return
   else:
-    print(f"총 {total}중 {total - failed_names.len()} 생성완료.")
+    print(f"총 {total}중 {total - len(failed_names)} 생성완료.")
     print("실패한 그림 목록입니다.")
     print(", ".join(failed_names))
 
