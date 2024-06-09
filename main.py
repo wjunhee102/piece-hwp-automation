@@ -27,7 +27,7 @@ def get_title_input():
       return title
     
 def get_current_date_input():
-  today = datetime.datetime.now().date()
+  today = datetime.datetime.now().strftime("%Y.%m.%d")
   
   user_input = input(f"날짜를 YYYY.MM.DD 형식으로 입력해주세요 (비워두면 오늘 날짜인 {today} 사용): ")
   
@@ -35,7 +35,7 @@ def get_current_date_input():
     return today
   else:
     try:
-      return datetime.datetime.strptime(user_input, '%Y.%m.%d').date()
+      return datetime.datetime.strptime(user_input, "%Y.%m.%d").date()
     except ValueError:
       print("잘못된 날짜 형식입니다. 다시 시도해주세요.")
       return get_current_date_input()
