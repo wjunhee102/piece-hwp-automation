@@ -5,10 +5,10 @@ import os
 
 def sanitize_name(name):
     invalid_chars = '<>:"/\\|?*'
-    new_name = name
+    new_name = f"{name}"
 
     for char in invalid_chars:
-        new_name = name.replace(char, "")
+        new_name = new_name.replace(char, "")
     return new_name
 
 def create_unique_directory(base_path, dir_name):
