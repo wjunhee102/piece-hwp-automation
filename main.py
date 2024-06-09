@@ -72,11 +72,12 @@ def get_settings(base_path):
               target_name = value.strip()
 
           elif key == "fields":
-            print(value)
-            value = value.split(",")
-            print(value)
-            if isinstance(value, list[str]):
-              fields = value
+            try:
+              parsed_value = eval(value)
+              if isinstance(parsed_value, list):
+                fields = [item.strip() for item in parsed_value]
+            except:
+              print("Fields 설정을 파싱할 수 없습니다.")
 
   except FileNotFoundError:
     print("settings.txt가 없으므로 default option으로 진행합니다.")
