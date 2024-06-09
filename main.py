@@ -21,6 +21,17 @@ def get_excel_filename():
   
   return file_name
 
+def get_numeric_input(prompt, default=0):
+  while True:
+    user_input = input(prompt)
+    
+    if user_input == "":
+      return default
+    try:
+      return int(user_input)
+    except ValueError:
+      print("유효하지 않은 입력입니다. 숫자를 입력해주세요.")
+
 def create_unique_directory(base_path, dir_name):
     try:
       new_dir_name = sanitize_name(dir_name)
@@ -63,6 +74,9 @@ def main():
   dir_name = create_unique_directory(file_root, title)
   excel_file_name = get_excel_filename()
   excel_file_path = f"./{excel_file_name}.xlsx"
+  startPoint = get_numeric_input("시작지점을 입력해주세요.(기본값 0): ")
+
+  print(f"설정된 시작지점: {startPoint}")
 
   if dir_name is None:
     print("사업명이 폴더명에 적합하지 않습니다. 다시 시도해주세요.")
@@ -86,6 +100,9 @@ def main():
       if response.lower() == 'y':
           print("작업이 중단되었습니다.")
           break
+      
+    if startPoint > index:
+      continue
 
     if pd.isna(row['name']) or row['name'] == '':
       failed_names.append(f"[row-index: {index}, name: 이름 없음]")
