@@ -190,7 +190,7 @@ def main():
     progress_count += 1
 
     if pd.isna(row[target_name]) or row[target_name] == '':
-      failed_names.append(f"[index: {index + 1}, name: 이름 없음]")
+      failed_names.append(f"[index: {index + 1}, {target_name}: 없음]")
     
     else:
       try:
@@ -222,7 +222,7 @@ def main():
         hwp.Quit()
 
       except ValueError:
-          failed_names.append(f"[index: {index + 1}, name: {row[target_name]}]")
+          failed_names.append(f"[index: {index + 1}, {target_name}: {row[target_name]}]")
 
   print(f"\n 총 {progress_count} 중 {generated_count} 생성완료. \n")
   
