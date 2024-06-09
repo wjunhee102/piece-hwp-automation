@@ -2,6 +2,7 @@ import pandas as pd
 import shutil
 import win32com.client as win32
 import os
+import sys
 from tqdm import tqdm
 import keyboard
 import threading
@@ -84,6 +85,10 @@ def main():
 
   template_hwp_path = "./template.hwp"
   file_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+
+  if getattr(sys, 'frozen', False):
+    file_root = os.path.dirname(os.path.abspath(sys.executable))
+
   fields = ["name", "number", "artist", "date", "size", "framesize", "material"]
 
   if os.path.exists(os.path.join(file_root, template_hwp_path)) is False:
