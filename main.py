@@ -183,13 +183,16 @@ def main():
 
   df = pd.read_excel(excel_file_path)
 
-  progress_count = 0;
-  generated_count = 0;
+  progress_count = 0
+  generated_count = 0
   failed_names = []
 
   print("\n - 정보 -")
   print(f"가져올 데이터 파일: {excel_file_name}.xlsx")
   print(f"사업명: {title}")
+  print(f"날짜: {current_date}")
+  print(f"파일명이 될 필드: {target_name}")
+  print(f"입력될 필드: {fields}")
   print(f"시작지점: {start_point + 1}")
   if selected_count < 1:
     print(f"생성할 파일의 수: 전체")
