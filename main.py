@@ -165,8 +165,8 @@ def main():
 
   title = get_title_input()
   current_date = get_current_date_input()
-  start_point = get_numeric_input("시작지점을 입력해주세요. (빈값으로 입력시 1): ")
-  selected_count = get_numeric_input("생성할 파일의 수를 입력해주세요. (빈값으로 입력시 전체 생성): ")
+  start_point = get_numeric_input("시작지점을 입력해주세요. (비워두면 1로 입력): ")
+  selected_count = get_numeric_input("생성할 파일의 수를 입력해주세요. (비워두면 전체 생성): ")
 
   dir_name = create_unique_directory(file_root, title)
 
