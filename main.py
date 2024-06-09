@@ -53,6 +53,41 @@ def get_numeric_input(prompt, default=0):
   
   return number - 1
 
+def get_settings(base_path):
+  settings_path = os.path.join(base_path, "settings.txt")
+  target = "name"
+  fields = ["name", "number", "artist", "date", "size", "framesize", "material"]
+
+  try:
+    with open(settings_path, "r") as file:
+      for line in file:
+        line = line.strip()
+
+        if line:
+          key, value = line.split("=", 1)
+          key = key.strip()
+          
+          if key == "target":
+            if value.isalpha():
+              target = value.strip()
+
+          elif key == "fields":
+            value = value.split(",")
+            if isinstance(value, list):
+              fields = value
+
+  except FileNotFoundError:
+    print("settings.txt가 없으므로 default option으로 진행합니다.")
+  except Exception as e:
+    print("사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다.")
+    print(f"{e}")
+    
+    target_name = "name"
+    fields = ["name", "number", "artist", "date", "size", "framesize", "material"]
+
+  return {target_name, fields}
+
+
 def create_unique_directory(base_path, dir_name):
     try:
       new_dir_name = sanitize_name(dir_name)
@@ -89,7 +124,10 @@ def main():
   if getattr(sys, 'frozen', False):
     file_root = os.path.dirname(os.path.abspath(sys.executable))
 
-  fields = ["name", "number", "artist", "date", "size", "framesize", "material"]
+  settings = get_settings(file_root)
+
+  fields = settings["fields"]
+  target_name = settings["target_name"]
 
   if os.path.exists(os.path.join(file_root, template_hwp_path)) is False:
     print("template.hwp이 존재하지 않습니다. template.hwp을 해당 프로그램 위치에 배치하여 다시 시도해주세요.")
@@ -146,12 +184,12 @@ def main():
 
     progress_count += 1
 
-    if pd.isna(row['name']) or row['name'] == '':
+    if pd.isna(row[target_name]) or row[target_name] == '':
       failed_names.append(f"[index: {index + 1}, name: 이름 없음]")
     
     else:
       try:
-        file_name = sanitize_name(row["name"])
+        file_name = sanitize_name(row[target_name])
         new_file_path = f"./{dir_name}/{index + 1}-{file_name}.hwp"
 
         shutil.copy(template_hwp_path, new_file_path)
@@ -179,7 +217,7 @@ def main():
         hwp.Quit()
 
       except ValueError:
-          failed_names.append(f"[index: {index + 1}, name: {row["name"]}]")
+          failed_names.append(f"[index: {index + 1}, name: {row[target_name]}]")
 
   print(f"\n 총 {progress_count} 중 {generated_count} 생성완료. \n")
   

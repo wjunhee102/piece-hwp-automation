@@ -1,0 +1,2 @@
+target=name
+fields=name,number,artist,date,size,framesize,material
