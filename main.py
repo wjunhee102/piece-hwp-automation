@@ -14,6 +14,15 @@ def sanitize_name(name):
     new_name = new_name.replace(char, "")
   return new_name
 
+def get_title_input():
+  while True:
+    title = input("사업명을 입력해주세요: ")
+
+    if title.strip() == "":
+      print("사업명은 필수로 작성해주셔야 합니다.")
+    else:
+      return title
+
 def get_excel_filename():
   file_name = input("Excel 파일의 이름을 입력하세요 (확장자 .xlsx 포함 가능): ")
   
@@ -80,7 +89,7 @@ def main():
 
     return
 
-  title = input("사업명을 입력해주세요: ")
+  title = get_title_input()
   excel_file_name = get_excel_filename()
   excel_file_path = f"./{excel_file_name}.xlsx"
   start_point = get_numeric_input("시작지점을 입력해주세요. (빈값으로 입력시 1): ")
