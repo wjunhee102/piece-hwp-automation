@@ -190,8 +190,12 @@ def check_esc():
       if response.lower() == 'y':
         print("\n 작업이 중단되었습니다.")
         os._exit(1) 
+      else:
+        break;
         
     time.sleep(0.1)
+    
+  check_esc()
     
 
 esc_thread = threading.Thread(target=check_esc)
