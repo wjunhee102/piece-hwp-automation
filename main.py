@@ -55,7 +55,7 @@ def get_numeric_input(prompt, default=0):
 
 def get_settings(base_path):
   settings_path = os.path.join(base_path, "settings.txt")
-  target = "name"
+  target_name = "name"
   fields = ["name", "number", "artist", "date", "size", "framesize", "material"]
 
   try:
@@ -69,21 +69,27 @@ def get_settings(base_path):
           
           if key == "target":
             if value.isalpha():
-              target = value.strip()
+              target_name = value.strip()
 
           elif key == "fields":
+            print(value)
             value = value.split(",")
-            if isinstance(value, list):
+            print(value)
+            if isinstance(value, list[str]):
               fields = value
 
   except FileNotFoundError:
     print("settings.txt가 없으므로 default option으로 진행합니다.")
+
+    return {target_name, fields}
   except Exception as e:
     print("사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다.")
     print(f"{e}")
     
     target_name = "name"
     fields = ["name", "number", "artist", "date", "size", "framesize", "material"]
+
+    return {target_name, fields}
 
   return {target_name, fields}
 
