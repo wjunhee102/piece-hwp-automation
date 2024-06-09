@@ -7,6 +7,7 @@ from tqdm import tqdm
 import keyboard
 import threading
 import time
+import datetime
 
 def sanitize_name(name):
   invalid_chars = '<>:"/\\|?*\n'
@@ -18,12 +19,26 @@ def sanitize_name(name):
 
 def get_title_input():
   while True:
-    title = input("사업명을 입력해주세요: ")
+    title = input("사업명을 입력해주세요 (필수작성): ")
 
     if title.strip() == "":
       print("사업명은 필수로 작성해주셔야 합니다.")
     else:
       return title
+    
+def get_current_date_input():
+  today = datetime.datetime.now().date()
+  
+  user_input = input(f"날짜를 YYYY-MM-DD 형식으로 입력해주세요 (비워두면 오늘 날짜인 {today} 사용): ")
+  
+  if not user_input: 
+    return today
+  else:
+    try:
+      return datetime.datetime.strptime(user_input, '%Y-%m-%d').date()
+    except ValueError:
+      print("잘못된 날짜 형식입니다. 다시 시도해주세요.")
+      return get_current_date_input()
 
 def get_excel_filename():
   file_name = input("Excel 파일의 이름을 입력하세요 (확장자 .xlsx 포함 가능): ")
@@ -76,6 +91,13 @@ def get_settings(base_path):
               fields = [item.strip() for item in value.split(",")]
             except:
               print("Fields 설정을 파싱할 수 없습니다.")
+              
+              target_name = "name"
+              fields = ["name", "number", "artist", "date", "size", "framesize", "material"]
+
+              return [target_name, fields]
+                    
+    return [target_name, fields]
 
   except FileNotFoundError:
     print("settings.txt가 없으므로 default option으로 진행합니다.")
@@ -89,8 +111,6 @@ def get_settings(base_path):
     fields = ["name", "number", "artist", "date", "size", "framesize", "material"]
 
     return [target_name, fields]
-
-  return [target_name, fields]
 
 
 def create_unique_directory(base_path, dir_name):
@@ -148,6 +168,7 @@ def main():
     return
 
   title = get_title_input()
+  current_date = get_current_date_input()
   start_point = get_numeric_input("시작지점을 입력해주세요. (빈값으로 입력시 1): ")
   selected_count = get_numeric_input("생성할 파일의 수를 입력해주세요. (빈값으로 입력시 전체 생성): ")
 
@@ -207,6 +228,7 @@ def main():
         hwp.Open(file_path)
         
         hwp.PutFieldText("title", title)
+        hwp.PutFieldText("currentdate", current_date)
 
         for field in fields:
           if field in df.columns: 
