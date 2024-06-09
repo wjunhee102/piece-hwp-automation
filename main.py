@@ -80,14 +80,14 @@ def main():
     return
 
   title = input("사업명을 입력해주세요: ")
-  dir_name = create_unique_directory(file_root, title)
   excel_file_name = get_excel_filename()
   excel_file_path = f"./{excel_file_name}.xlsx"
   startPoint = get_numeric_input("시작지점을 입력해주세요. (빈값으로 입력시 1): ")
 
-  print(f"설정된 시작지점: {startPoint}")
+  dir_name = create_unique_directory(file_root, title)
 
   if dir_name is None:
+
     print("사업명이 폴더명에 적합하지 않습니다. 다시 시도해주세요.")
     
     return
@@ -101,6 +101,7 @@ def main():
 
   failed_names = []
 
+  print(f"설정된 시작지점: {startPoint}")
   print("작업을 시작합니다.")
 
   for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="진행 중"):
