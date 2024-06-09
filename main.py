@@ -22,15 +22,24 @@ def get_excel_filename():
   return file_name
 
 def get_numeric_input(prompt, default=0):
+  number = default + 1
+
   while True:
     user_input = input(prompt)
     
     if user_input == "":
       return default
     try:
-      return int(user_input)
+      number = int(user_input)
+      
+      break
     except ValueError:
       print("유효하지 않은 입력입니다. 숫자를 입력해주세요.")
+
+  if number < 1:
+    return default
+  
+  return number - 1
 
 def create_unique_directory(base_path, dir_name):
     try:
@@ -74,7 +83,7 @@ def main():
   dir_name = create_unique_directory(file_root, title)
   excel_file_name = get_excel_filename()
   excel_file_path = f"./{excel_file_name}.xlsx"
-  startPoint = get_numeric_input("시작지점을 입력해주세요.(기본값 0): ")
+  startPoint = get_numeric_input("시작지점을 입력해주세요. (빈값으로 입력시 1): ")
 
   print(f"설정된 시작지점: {startPoint}")
 
@@ -140,11 +149,11 @@ def main():
   total = df.shape[0]
 
   if not failed_names:
-    print(f"총 {total}중 {total} 생성완료.")
+    print(f"총 {total - startPoint}중 {total - startPoint} 생성완료.")
     print("성공적으로 완료됐습니다!")
     return
   else:
-    print(f"총 {total}중 {total - len(failed_names)} 생성완료.")
+    print(f"총 {total}중 {total - (len(failed_names) + startPoint)} 생성완료.")
     print("실패한 그림 목록입니다.")
     print(", ".join(failed_names))
 
