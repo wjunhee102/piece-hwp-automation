@@ -105,9 +105,10 @@ def main():
   failed_names = []
 
   print("\n - 정보 -")
+  print(f"가져올 데이터 파일: {excel_file_name}.xlsx")
   print(f"사업명: {title}")
-  print(f"설정된 시작지점: {start_point + 1}")
-  print(f"설정된 생성할 파일의 수: {selected_count + 1}")
+  print(f"시작지점: {start_point + 1}")
+  print(f"생성할 파일의 수: {selected_count + 1}")
   print("\n 작업을 시작합니다.")
 
   for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="진행 중"):
@@ -160,7 +161,7 @@ def main():
       except ValueError:
           failed_names.append(f"[index: {index + 1}, name: {row["name"]}]")
 
-  print(f"\n 총 {progress_count}중 {generated_count} 생성완료. \n")
+  print(f"\n 총 {progress_count} 중 {generated_count} 생성완료. \n")
   
   if not failed_names:
     print("성공적으로 완료됐습니다!")
