@@ -80,6 +80,7 @@ def create_unique_directory(base_path, dir_name):
         return None
 
 def main():
+  print("\n Piece hwp automation \n")
 
   template_hwp_path = "./template.hwp"
   file_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
@@ -90,9 +91,15 @@ def main():
 
     return
 
-  title = get_title_input()
   excel_file_name = get_excel_filename()
   excel_file_path = f"./{excel_file_name}.xlsx"
+
+  if os.path.exists(os.path.join(file_root, excel_file_path)) is False:
+    print(f"{excel_file_name}.xlsx이 존재하지 않습니다. {excel_file_name}.xlsx을 해당 프로그램 위치에 배치하여 다시 시도해주세요.")
+
+    return
+
+  title = get_title_input()
   start_point = get_numeric_input("시작지점을 입력해주세요. (빈값으로 입력시 1): ")
   selected_count = get_numeric_input("생성할 파일의 수를 입력해주세요. (빈값으로 입력시 전체 생성): ")
 
@@ -178,10 +185,10 @@ def main():
 def check_esc():
   while True:
     if keyboard.is_pressed('esc'):
-      response = input("작업을 중단하시겠습니까? (y/n): ")
+      response = input("\n 작업을 중단하시겠습니까? (y/n): ")
       
       if response.lower() == 'y':
-        print("작업이 중단되었습니다.")
+        print("\n 작업이 중단되었습니다.")
         os._exit(1) 
         
     time.sleep(0.1)
