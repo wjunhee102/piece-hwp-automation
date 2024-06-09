@@ -115,12 +115,12 @@ def main():
       continue
 
     if pd.isna(row['name']) or row['name'] == '':
-      failed_names.append(f"[row-index: {index}, name: 이름 없음]")
+      failed_names.append(f"[row-index: {index + 1}, name: 이름 없음]")
     
     else:
       try:
         file_name = sanitize_name(row["name"])
-        new_file_path = f"./{dir_name}/{index}-{file_name}.hwp"
+        new_file_path = f"./{dir_name}/{index + 1}-{file_name}.hwp"
 
         shutil.copy(template_hwp_path, new_file_path)
 
@@ -145,7 +145,7 @@ def main():
         hwp.Save()
         hwp.Quit()
       except ValueError:
-          failed_names.append(f"[row-index: {index}, name: {row["name"]}]")
+          failed_names.append(f"[row-index: {index + 1}, name: {row["name"]}]")
   
   total = df.shape[0]
 
