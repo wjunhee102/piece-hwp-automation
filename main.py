@@ -105,8 +105,8 @@ def main():
   failed_names = []
 
   print(f"설정된 시작지점: {start_point + 1}")
-  print(f"설정된 생성할 파일의 수: {selected_count}")
-  print("작업을 시작합니다.")
+  print(f"설정된 생성할 파일의 수: {selected_count + 1}")
+  print("\n 작업을 시작합니다.")
 
   for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="진행 중"):
     if keyboard.is_pressed('esc'):
@@ -158,7 +158,7 @@ def main():
       except ValueError:
           failed_names.append(f"[index: {index + 1}, name: {row["name"]}]")
 
-  print(f"총 {progress_count}중 {generated_count} 생성완료.")
+  print(f"\n 총 {progress_count}중 {generated_count} 생성완료. \n")
   
   if not failed_names:
     print("성공적으로 완료됐습니다!")
@@ -170,5 +170,5 @@ def main():
 try:
   main()
 except Exception as e:
-  print("사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다.")
+  print("\n 사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다. \n")
   print(f"{e}")
