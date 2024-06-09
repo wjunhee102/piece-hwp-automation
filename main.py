@@ -83,7 +83,7 @@ def main():
   excel_file_name = get_excel_filename()
   excel_file_path = f"./{excel_file_name}.xlsx"
   start_point = get_numeric_input("시작지점을 입력해주세요. (빈값으로 입력시 1): ")
-  selected_count = get_numeric_input("생성할 파일의 수를 입력해주세요. (빈값으로 입력시 전체 생성):")
+  selected_count = get_numeric_input("생성할 파일의 수를 입력해주세요. (빈값으로 입력시 전체 생성): ")
 
   dir_name = create_unique_directory(file_root, title)
 
