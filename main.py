@@ -117,7 +117,7 @@ def main():
     if start_point > index:
       continue
 
-    if selected_count != 0 or index > start_point + selected_count:
+    if selected_count != 0 and index > start_point + selected_count:
       break
 
     progress_count += 1
