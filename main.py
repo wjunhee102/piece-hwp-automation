@@ -4,6 +4,7 @@ import win32com.client as win32
 import os
 from tqdm import tqdm
 import keyboard
+import threading
 
 def sanitize_name(name):
   invalid_chars = '<>:"/\\|?*\n'
@@ -111,13 +112,7 @@ def main():
   print(f"생성할 파일의 수: {selected_count + 1}")
   print("\n 작업을 시작합니다.")
 
-  for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="진행 중"):
-    if keyboard.is_pressed('esc'):
-      response = input("작업을 중단하시겠습니까? (y/n): ")
-      if response.lower() == 'y':
-          print("작업이 중단되었습니다.")
-          break
-      
+  for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="진행 중"):      
     if start_point > index:
       continue
 
@@ -169,6 +164,19 @@ def main():
   else:
     print("실패한 그림 목록입니다.")
     print(", ".join(failed_names))
+
+def check_esc():
+  keyboard.wait("esc")
+  response = input("작업을 중단하시겠습니까? (y/n): ")
+  if response.lower() == 'y':
+    print("작업이 중단되었습니다.")
+    os._exit(1) 
+  else:
+    check_esc()
+
+esc_thread = threading.Thread(target=check_esc)
+esc_thread.daemon = True
+esc_thread.start()
 
 try:
   main()
