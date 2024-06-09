@@ -6,46 +6,43 @@ from tqdm import tqdm
 import keyboard
 
 def sanitize_name(name):
-    invalid_chars = '<>:"/\\|?*'
-    new_name = f"{name}"
+  invalid_chars = '<>:"/\\|?*\n'
+  new_name = f"{name}"
 
-    for char in invalid_chars:
-        new_name = new_name.replace(char, "")
-    return new_name
+  for char in invalid_chars:
+    new_name = new_name.replace(char, "")
+  return new_name
 
 def get_excel_filename():
-    # 사용자로부터 파일 이름 입력 받기
-    file_name = input("Excel 파일의 이름을 입력하세요 (확장자 .xlsx 포함 가능): ")
-    
-    # 파일 이름에서 .xlsx 확장자 제거
-    if file_name.endswith('.xlsx'):
-        # .xlsx 확장자가 있으면 제거
-        file_name = file_name[:-5]
-    
-    return file_name
+  file_name = input("Excel 파일의 이름을 입력하세요 (확장자 .xlsx 포함 가능): ")
+  
+  if file_name.endswith('.xlsx'):
+    file_name = file_name[:-5]
+  
+  return file_name
 
 def create_unique_directory(base_path, dir_name):
     try:
-        new_dir_name = sanitize_name(dir_name)
-        directory_path = os.path.join(base_path, new_dir_name)
+      new_dir_name = sanitize_name(dir_name)
+      directory_path = os.path.join(base_path, new_dir_name)
 
-        if os.path.exists(directory_path):
-            counter = 1
-            new_dir_name = f"{dir_name}_{counter}"
-            new_directory_path = os.path.join(base_path, new_dir_name)
-            
-            while os.path.exists(new_directory_path):
-                counter += 1
-                new_dir_name = f"{dir_name}_{counter}"
-                new_directory_path = os.path.join(base_path, new_dir_name)
-            
-            os.mkdir(new_directory_path)
-            print(f"폴더가 생성되었습니다: {new_directory_path}")
-        else:
-            os.mkdir(directory_path)
-            print(f"폴더가 생성되었습니다:  {directory_path}")
+      if os.path.exists(directory_path):
+        counter = 1
+        new_dir_name = f"{dir_name}_{counter}"
+        new_directory_path = os.path.join(base_path, new_dir_name)
         
-        return new_dir_name
+        while os.path.exists(new_directory_path):
+          counter += 1
+          new_dir_name = f"{dir_name}_{counter}"
+          new_directory_path = os.path.join(base_path, new_dir_name)
+        
+        os.mkdir(new_directory_path)
+        print(f"폴더가 생성되었습니다: {new_directory_path}")
+      else:
+          os.mkdir(directory_path)
+          print(f"폴더가 생성되었습니다:  {directory_path}")
+      
+      return new_dir_name
     except Exception as e:
         print("사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다.")
         print(f"{e}")
@@ -81,16 +78,18 @@ def main():
   df = pd.read_excel(excel_file_path)
 
   failed_names = []
+  total = df.shape[0]
 
-  for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="진행 중"):
+  for index, row in tqdm(df.iterrows(), total, desc="진행 중"):
     if keyboard.is_pressed('esc'):
       response = input("작업을 중단하시겠습니까? (y/n): ")
       if response.lower() == 'y':
           print("작업이 중단되었습니다.")
           break
 
-    if row["name"] is None:
-        print("not name")
+    if pd.isna(row['name']) or row['name'] == '':
+      failed_names.append(f"[row-index: {index}, name: 이름 없음]")
+    
     else:
       try:
         file_name = sanitize_name(row["name"])
@@ -121,8 +120,14 @@ def main():
       except ValueError:
           failed_names.append(f"[row-index: {index}, name: {row["name"]}]")
   
-  print("실패한 그림 목록입니다.")
-  print(", ".join(failed_names))
+  if not failed_names:
+    print(f"총 {total}중 {total} 생성완료.")
+    print("성공적으로 완료됐습니다!")
+    return
+  else:
+    print(f"총 {total}중 {total - failed_names.len()} 생성완료.")
+    print("실패한 그림 목록입니다.")
+    print(", ".join(failed_names))
 
 try:
   main()
