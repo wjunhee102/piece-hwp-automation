@@ -61,14 +61,13 @@ def main():
 
   title = input("사업명을 입력해주세요: ")
   dir_name = create_unique_directory(file_root, title)
+  excel_file_name = get_excel_filename()
+  excel_file_path = f"./{excel_file_name}.xlsx"
 
   if dir_name is None:
     print("사업명이 폴더명에 적합하지 않습니다. 다시 시도해주세요.")
     
     return
-  
-  excel_file_name = get_excel_filename()
-  excel_file_path = f"./{excel_file_name}.xlsx"
 
   if os.path.exists(os.path.join(file_root, excel_file_path)) is False:
     print(f"{excel_file_name}.xlsx이 존재하지 않습니다. {excel_file_name}.xlsx을 해당 프로그램 위치에 배치하여 다시 시도해주세요.")
@@ -79,6 +78,8 @@ def main():
 
   failed_names = []
   total = df.shape[0]
+
+  print("작업을 시작합니다.")
 
   for index, row in tqdm(df.iterrows(), total, desc="진행 중"):
     if keyboard.is_pressed('esc'):
