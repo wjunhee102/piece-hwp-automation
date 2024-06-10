@@ -307,7 +307,7 @@ esc_thread.start()
 try:
   main()
 except Exception as e:
-  print("\n사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다. \n")
+  print("\n사용중 오류가 발생했습니다.\n하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다.(email: wjunhee102@gmail.com)\n")
   print(f"{e}")
 
-input("\n종료하려면 enter 키를 눌러주세요.")
+input("\n종료하려면 enter 키를 눌러주세요.\n")
