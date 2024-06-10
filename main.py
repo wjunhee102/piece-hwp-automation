@@ -68,11 +68,25 @@ def get_numeric_input(prompt, default=0):
   
   return number - 1
 
+def create_txt(name, str):
+  try:
+    file_name = f"{name}.txt"
+
+    with open(file_name, "w") as file:
+      file.write(str)
+      print(f"{file_name}이 생성되었습니다. \n")
+
+  except Exception as e:
+    print(e)
+    print(f"{name}.txt 생성에 실패하였습니다. \n")
+
 def get_settings(base_path):
   settings_path = os.path.join(base_path, "settings.txt")
   default_target_name = "name"
+  default_sub_target_name = "artist"
   default_fields = ["name", "number", "artist", "date", "size", "framesize", "material", "place"]
   target_name = default_target_name
+  sub_target_name = ""
   fields = default_fields
 
   try:
@@ -88,25 +102,33 @@ def get_settings(base_path):
             if value.isalpha():
               target_name = value.strip()
 
+          elif key == "subtarget":
+            if value.isalpha():
+              sub_target_name = value.strip()
+
           elif key == "fields":
             try:
               fields = [item.strip() for item in value.split(",")]
             except:
               print("Fields 설정을 파싱할 수 없습니다.")
 
-              return [default_target_name, default_fields]
+              return [default_target_name, default_sub_target_name, default_fields]
                     
-    return [target_name, fields]
+    return [target_name, sub_target_name, fields]
 
   except FileNotFoundError:
-    print("settings.txt가 없으므로 default option으로 진행합니다.")
+    print("\n settings.txt가 없어 새로 생성합니다.")
+    
+    settings = f"target={default_target_name}\nsubtarget={default_sub_target_name}\nfields={','.join(default_fields)}"
+    
+    create_txt("settings", settings)
 
-    return [default_target_name, default_fields]
+    return [default_target_name, default_sub_target_name, default_fields]
   except Exception as e:
     print("사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다.")
     print(f"{e}")
 
-    return [default_target_name, default_fields]
+    return [default_target_name, default_sub_target_name, default_fields]
 
 
 def create_unique_directory(base_path, dir_name):
@@ -137,7 +159,7 @@ def create_unique_directory(base_path, dir_name):
         return None
 
 def main():
-  print("\n Piece hwp automation \n")
+  print("\n** Piece hwp automation **\n")
 
   template_hwp_path = "./template.hwp"
   file_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
@@ -148,7 +170,8 @@ def main():
   settings = get_settings(file_root)
 
   target_name = settings[0]
-  fields = settings[1]
+  sub_target_name = settings[1]
+  fields = settings[2]
 
   if os.path.exists(os.path.join(file_root, template_hwp_path)) is False:
     print("template.hwp이 존재하지 않습니다. template.hwp을 해당 프로그램 위치에 배치하여 다시 시도해주세요.")
@@ -162,6 +185,10 @@ def main():
     print(f"{excel_file_name}.xlsx이 존재하지 않습니다. {excel_file_name}.xlsx을 해당 프로그램 위치에 배치하여 다시 시도해주세요.")
 
     return
+  
+  df = pd.read_excel(excel_file_path)
+  print(f"\n{excel_file_name}를 성공적으로 불러왔습니다.")
+  print(f"총 라인의 수: {df.shape[0]} \n")
 
   title = get_title_input()
   current_date = get_current_date_input()
@@ -176,29 +203,29 @@ def main():
     
     return
 
-  if os.path.exists(os.path.join(file_root, excel_file_path)) is False:
-    print(f"{excel_file_name}.xlsx이 존재하지 않습니다. {excel_file_name}.xlsx을 해당 프로그램 위치에 배치하여 다시 시도해주세요.")
-
-    return
-
-  df = pd.read_excel(excel_file_path)
-
   progress_count = 0
   generated_count = 0
   failed_names = []
 
-  print("\n - 정보 -")
+  print("\n- 정보 -")
   print(f"가져올 데이터 파일: {excel_file_name}.xlsx")
   print(f"사업명: {title}")
   print(f"날짜: {current_date}")
-  print(f"파일명이 될 필드: {target_name}")
+
+  if sub_target_name == "":
+    print(f"파일명이 될 필드: {target_name}, {sub_target_name}")
+  else:
+    print(f"파일명이 될 필드: {target_name}")
+
   print(f"입력될 필드: {fields}")
   print(f"시작지점: {start_point + 1}")
+
   if selected_count < 1:
     print(f"생성할 파일의 수: 전체")
   else:
     print(f"생성할 파일의 수: {selected_count + 1}")
-  print("\n 작업을 시작합니다. (작업을 중단하려면 ESC를 눌러주세요.)\n")
+
+  print("\n작업을 시작합니다. (작업을 중단하려면 ESC를 눌러주세요.)\n")
 
   for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="진행 중"):      
     if start_point > index:
@@ -209,13 +236,22 @@ def main():
 
     progress_count += 1
 
-    if pd.isna(row[target_name]) or row[target_name] == '':
+    if pd.isna(row[target_name]) or row[target_name] == "":
       failed_names.append(f"[index: {index + 1}, {target_name}: 없음]")
     
     else:
       try:
-        file_name = sanitize_name(row[target_name])
-        new_file_path = f"./{dir_name}/{index + 1}-{file_name}.hwp"
+        name = sanitize_name(row[target_name])
+        new_file_path = f"./{dir_name}/{index + 1}-{name}.hwp"
+        subname = ""
+
+        if sub_target_name != "":
+          if pd.isna(row[sub_target_name]) or row[sub_target_name] == "":
+            subname = sanitize_name(row[sub_target_name])
+
+        if subname != "":
+          new_file_path = f"./{dir_name}/{index + 1}-{name}-{subname}.hwp"
+          
 
         shutil.copy(template_hwp_path, new_file_path)
 
@@ -245,7 +281,7 @@ def main():
       except ValueError:
           failed_names.append(f"[index: {index + 1}, {target_name}: {row[target_name]}]")
 
-  print(f"\n 총 {progress_count} 중 {generated_count} 생성완료. \n")
+  print(f"\n총 {progress_count} 중 {generated_count} 생성완료. \n")
   
   if not failed_names:
     print("성공적으로 완료됐습니다!")
@@ -271,7 +307,7 @@ esc_thread.start()
 try:
   main()
 except Exception as e:
-  print("\n 사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다. \n")
+  print("\n사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다. \n")
   print(f"{e}")
 
 input("종료하려면 enter 키를 눌러주세요.")

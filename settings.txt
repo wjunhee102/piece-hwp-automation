@@ -1,2 +1,3 @@
 target=name
+subtarget=artist
 fields=name,number,artist,date,size,framesize,material,place
