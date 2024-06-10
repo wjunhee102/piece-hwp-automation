@@ -117,7 +117,7 @@ def get_settings(base_path):
     return [target_name, sub_target_name, fields]
 
   except FileNotFoundError:
-    print("\n settings.txt가 없어 새로 생성합니다.")
+    print("\nsettings.txt가 존재하지 않아 새로 생성합니다.")
     
     settings = f"target={default_target_name}\nsubtarget={default_sub_target_name}\nfields={','.join(default_fields)}"
     
@@ -172,7 +172,7 @@ def main():
   target_name = settings[0]
   sub_target_name = settings[1]
   fields = settings[2]
-  print(sub_target_name)
+
   if os.path.exists(os.path.join(file_root, template_hwp_path)) is False:
     print("template.hwp이 존재하지 않습니다. template.hwp을 해당 프로그램 위치에 배치하여 다시 시도해주세요.")
 
@@ -193,7 +193,7 @@ def main():
   title = get_title_input()
   current_date = get_current_date_input()
   start_point = get_numeric_input("시작지점을 입력해주세요. (비워두면 1로 입력): ")
-  selected_count = get_numeric_input("생성할 파일의 수를 입력해주세요. (비워두면 전체 생성): ")
+  selected_count = get_numeric_input("생성할 파일의 수를 입력해주세요. (비워두면 전체 생성): ", -1)
 
   dir_name = create_unique_directory(file_root, title)
 
@@ -220,7 +220,7 @@ def main():
   print(f"입력될 필드: {fields}")
   print(f"시작지점: {start_point + 1}")
 
-  if selected_count < 1:
+  if selected_count < 0:
     print(f"생성할 파일의 수: 전체")
   else:
     print(f"생성할 파일의 수: {selected_count + 1}")
@@ -231,7 +231,7 @@ def main():
     if start_point > index:
       continue
 
-    if selected_count != 0 and index > start_point + selected_count:
+    if selected_count > -1 and index > start_point + selected_count:
       break
 
     progress_count += 1
