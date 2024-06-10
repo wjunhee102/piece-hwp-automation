@@ -172,7 +172,7 @@ def main():
   target_name = settings[0]
   sub_target_name = settings[1]
   fields = settings[2]
-
+  print(sub_target_name)
   if os.path.exists(os.path.join(file_root, template_hwp_path)) is False:
     print("template.hwp이 존재하지 않습니다. template.hwp을 해당 프로그램 위치에 배치하여 다시 시도해주세요.")
 
@@ -212,7 +212,7 @@ def main():
   print(f"사업명: {title}")
   print(f"날짜: {current_date}")
 
-  if sub_target_name == "":
+  if sub_target_name != "":
     print(f"파일명이 될 필드: {target_name}, {sub_target_name}")
   else:
     print(f"파일명이 될 필드: {target_name}")
@@ -246,7 +246,7 @@ def main():
         subname = ""
 
         if sub_target_name != "":
-          if pd.isna(row[sub_target_name]) or row[sub_target_name] == "":
+          if pd.isna(row[sub_target_name]) is False and row[sub_target_name] != "":
             subname = sanitize_name(row[sub_target_name])
 
         if subname != "":
@@ -310,4 +310,4 @@ except Exception as e:
   print("\n사용중 오류가 발생했습니다. 하단의 에러 메세지를 개발자에게 전달하여 문제를 해결할 수 있습니다. \n")
   print(f"{e}")
 
-input("종료하려면 enter 키를 눌러주세요.")
+input("\n종료하려면 enter 키를 눌러주세요.")
