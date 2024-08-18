@@ -85,9 +85,11 @@ def get_settings(base_path):
   default_target_name = "name"
   default_sub_target_name = "artist"
   default_fields = ["name", "number", "artist", "date", "size", "framesize", "material", "place"]
+  default_index_field = "none";
   target_name = default_target_name
   sub_target_name = ""
   fields = default_fields
+  index_field = default_index_field
 
   try:
     with open(settings_path, "r") as file:
@@ -113,13 +115,16 @@ def get_settings(base_path):
               print("Fields 설정을 파싱할 수 없습니다.")
 
               return [default_target_name, default_sub_target_name, default_fields]
+          elif key == "index":
+            if value.isalpha():
+              index_field = value.strip()
                     
-    return [target_name, sub_target_name, fields]
+    return [target_name, sub_target_name, fields, index_field]
 
   except FileNotFoundError:
     print("\nsettings.txt가 존재하지 않아 새로 생성합니다.")
     
-    settings = f"target={default_target_name}\nsubtarget={default_sub_target_name}\nfields={','.join(default_fields)}"
+    settings = f"target={default_target_name}\nsubtarget={default_sub_target_name}\nfields={','.join(default_fields)}\nindex={default_index_field}"
     
     create_txt("settings", settings)
 
@@ -172,6 +177,7 @@ def main():
   target_name = settings[0]
   sub_target_name = settings[1]
   fields = settings[2]
+  index_field = settings[3]
 
   if os.path.exists(os.path.join(file_root, template_hwp_path)) is False:
     print("template.hwp이 존재하지 않습니다. template.hwp을 해당 프로그램 위치에 배치하여 다시 시도해주세요.")
@@ -242,17 +248,27 @@ def main():
     else:
       try:
         name = sanitize_name(row[target_name])
-        new_file_path = f"./{dir_name}/{index + 1}-{name}.hwp"
         subname = ""
+        indexname = ""
+        new_file_path = f"./{dir_name}/{index + 1}-{name}.hwp"
+
+        if index_field != "none":
+          if pd.isna(row[index_field]) is False and row[index_field] != "":
+            indexname = sanitize_name(row[index_field])
 
         if sub_target_name != "":
           if pd.isna(row[sub_target_name]) is False and row[sub_target_name] != "":
             subname = sanitize_name(row[sub_target_name])
 
-        if subname != "":
-          new_file_path = f"./{dir_name}/{index + 1}-{name}-{subname}.hwp"
+        if indexname != "":
+          if subname != "":
+            new_file_path = f"./{dir_name}/{indexname}-{name}-{subname}.hwp"
+          else:
+            new_file_path = f"./{dir_name}/{name}-{subname}.hwp"
+        else:
+          if subname != "":
+            new_file_path = f"./{dir_name}/{index + 1}-{name}-{subname}.hwp"
           
-
         shutil.copy(template_hwp_path, new_file_path)
 
         hwp = win32.gencache.EnsureDispatch("Hwpframe.hwpobject")
